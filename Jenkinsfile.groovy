@@ -61,5 +61,17 @@ pipeline {
                 }
             }
         }
+
+        stage('List S3 Buckets') {
+            steps {
+                script {
+                    // List all S3 buckets in the AWS account
+                    sh '''
+                        echo "Listing all S3 buckets in the AWS account..."
+                        aws s3 ls
+                    '''
+                }
+            }
+        }
     }
 }
