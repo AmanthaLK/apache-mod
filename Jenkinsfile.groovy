@@ -31,5 +31,20 @@ pipeline {
                 }
             }
         }
+
+        stage('Move File on Remote Server') {
+            steps {
+                sshagent(['aws-personal']) {
+                    script {
+                        // Use sudo -i bash -c to get root access and move the file
+                        sh '''
+                            echo "Moving index.html to /var/www/html on the remote server..."
+                            ssh -o StrictHostKeyChecking=no ubuntu@172.31.82.42 \
+                            'sudo -i bash -c "mv /tmp/index.html /var/www/html/index.html"'
+                        '''
+                    }
+                }
+            }
+        }
     }
 }
