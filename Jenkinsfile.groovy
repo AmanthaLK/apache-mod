@@ -5,7 +5,7 @@ pipeline {
         stage('Check Local File') {
             steps {
                 script {
-                    // Print the current directory, list files, and display the content of index.html
+                    // Print the current directory and list files
                     sh '''
                         echo "Current directory:"
                         pwd
@@ -18,44 +18,16 @@ pipeline {
             }
         }
 
-        stage('Copy File to Remote Server') {
+        stage('Copy to Remote Server') {
             steps {
-                sshagent(['aws-personal']) {
-                    script {
-                        // Copy the index.html file to the /tmp directory on the remote server
+                script {
+                    sshagent(['aws-personal']) {
                         sh '''
-                            echo "Copying index.html to remote server /tmp location..."
-                            scp -o StrictHostKeyChecking=no index.html ubuntu@172.31.82.42:/tmp/
-                        '''
-                    }
-                }
-            }
-        }
-
-        stage('Move File on Remote Server') {
-            steps {
-                sshagent(['aws-personal']) {
-                    script {
-                        // Use sudo -i bash -c to get root access and move the file
-                        sh '''
-                            echo "Moving index.html to /var/www/html on the remote server..."
-                            ssh -o StrictHostKeyChecking=no ubuntu@172.31.82.42 \
-                            'sudo -i bash -c "mv /tmp/index.html /var/www/html/index.html"'
-                        '''
-                    }
-                }
-            }
-        }
-
-        stage('Reload Apache Service') {
-            steps {
-                sshagent(['aws-personal']) {
-                    script {
-                        // Use sudo -i bash -c to reload the Apache service
-                        sh '''
-                            echo "Reloading Apache service on the remote server..."
-                            ssh -o StrictHostKeyChecking=no ubuntu@172.31.82.42 \
-                            'sudo -i bash -c "systemctl reload apache2.service"'
+                            echo "Copying index.html to remote server..."
+                            scp -o StrictHostKeyChecking=no -i /var/lib/jenkins/workspace/apache-modification@tmp/private_key_2022475152950786097.key index.html ubuntu@172.31.82.42:/tmp/index.html
+                            echo "Taking root access and moving file..."
+                            ssh -o StrictHostKeyChecking=no -i /var/lib/jenkins/workspace/apache-modification@tmp/private_key_2022475152950786097.key ubuntu@172.31.82.42 \
+                                'sudo -i bash -c "mv /tmp/index.html /var/www/html/index.html && systemctl reload apache2.service"'
                         '''
                     }
                 }
@@ -65,11 +37,24 @@ pipeline {
         stage('List S3 Buckets') {
             steps {
                 script {
-                    // List all S3 buckets in the AWS account
                     sh '''
-                        echo "Listing all S3 buckets in the AWS account..."
+                        echo "Listing all S3 buckets..."
                         aws s3 ls
                     '''
+                }
+            }
+        }
+
+        stage('Upload to S3 Bucket') {
+            steps {
+                script {
+                    def dateTime = new Date().format('yyyy-MM-dd_HH-mm-ss')
+                    sh """
+                        echo "Creating folder in S3 bucket and uploading files..."
+                        aws s3api put-object --bucket apache-backups-amantha --key ${dateTime}/
+                        aws s3 cp index.html s3://apache-backups-amantha/${dateTime}/index.html
+                        aws s3 cp Jenkinsfile.groovy s3://apache-backups-amantha/${dateTime}/Jenkinsfile.groovy
+                    """
                 }
             }
         }
