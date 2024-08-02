@@ -6,11 +6,11 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        echo "Current directory:"
+                        echo "+++++++++Current directory:+++++++++"
                         pwd
-                        echo "Listing files:"
+                        echo "+++++++++Listing files:+++++++++"
                         ls -l
-                        echo "Displaying index.html content:"
+                        echo "+++++++++Displaying index.html content:+++++++++"
                         cat index.html
                     '''
                 }
@@ -22,9 +22,9 @@ pipeline {
                 script {
                     sshagent(['aws-personal']) {
                         sh '''
-                            echo "Copying index.html to remote server..."
+                            echo "+++++++++Copying index.html to remote server+++++++++"
                             scp -o StrictHostKeyChecking=no -i /var/lib/jenkins/workspace/apache-modification@tmp/private_key_2022475152950786097.key index.html ubuntu@172.31.82.42:/tmp/index.html
-                            echo "Taking root access and moving file..."
+                            echo "+++++++++Taking root access and moving file+++++++++"
                             ssh -o StrictHostKeyChecking=no -i /var/lib/jenkins/workspace/apache-modification@tmp/private_key_2022475152950786097.key ubuntu@172.31.82.42 \
                                 'sudo -i bash -c "mv /tmp/index.html /var/www/html/index.html && systemctl reload apache2.service"'
                         '''
@@ -37,7 +37,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        echo "Listing all S3 buckets..."
+                        echo "+++++++++Listing all S3 buckets+++++++++"
                         aws s3 ls
                     '''
                 }
@@ -49,7 +49,7 @@ pipeline {
                 script {
                     def dateTime = new Date().format('yyyy-MM-dd_HH-mm-ss')
                     sh """
-                        echo "Creating folder in S3 bucket and uploading files..."
+                        echo "+++++++++Creating folder in S3 bucket and uploading files+++++++++"
                         aws s3api put-object --bucket apache-backups-amantha --key ${dateTime}/
                         aws s3 cp index.html s3://apache-backups-amantha/${dateTime}/index.html
                         aws s3 cp Jenkinsfile.groovy s3://apache-backups-amantha/${dateTime}/Jenkinsfile.groovy
