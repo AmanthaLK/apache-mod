@@ -13,8 +13,9 @@ pipeline {
                                 echo "Logged in as $(whoami)"
                                 sudo -i bash -c '
                                     echo "Switched to root";
-                                    cd /etc;
+                                    cd /var/www/html;
                                     ls;
+                                    cat index.html;
                                 '
                                 exit
                                 EOF
