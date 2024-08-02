@@ -46,5 +46,20 @@ pipeline {
                 }
             }
         }
+
+        stage('Reload Apache Service') {
+            steps {
+                sshagent(['aws-personal']) {
+                    script {
+                        // Use sudo -i bash -c to reload the Apache service
+                        sh '''
+                            echo "Reloading Apache service on the remote server..."
+                            ssh -o StrictHostKeyChecking=no ubuntu@172.31.82.42 \
+                            'sudo -i bash -c "systemctl reload apache2.service"'
+                        '''
+                    }
+                }
+            }
+        }
     }
 }
