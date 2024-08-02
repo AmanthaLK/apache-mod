@@ -20,12 +20,14 @@ pipeline {
 
         stage('Copy File to Remote Server') {
             steps {
-                script {
-                    // Copy the index.html file to the /tmp directory on the remote server
-                    sh '''
-                        echo "Copying index.html to remote server /tmp location..."
-                        scp -i /path/to/private_key -o StrictHostKeyChecking=no index.html ubuntu@172.31.82.42:/tmp/
-                    '''
+                sshagent(['aws-personal']) {
+                    script {
+                        // Copy the index.html file to the /tmp directory on the remote server
+                        sh '''
+                            echo "Copying index.html to remote server /tmp location..."
+                            scp -o StrictHostKeyChecking=no index.html ubuntu@172.31.82.42:/tmp/
+                        '''
+                    }
                 }
             }
         }
