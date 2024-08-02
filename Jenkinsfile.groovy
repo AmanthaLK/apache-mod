@@ -6,10 +6,15 @@ pipeline {
             steps {
                 echo 'Starting Build Stage...'
                 echo 'Building...'
-                sh 'ls' 
-                sh 'cat index.html' 
+                sh 'ls' // List files and directories in the current directory
+                sh 'cat index.html' // Display the contents of index.html
+            }
+        }
+        stage('List Jenkins Master Directory') {
+            steps {
+                echo 'Listing contents of /home/ubuntu on Jenkins master...'
+                sh 'ls /home/ubuntu' // List files and directories in /home/ubuntu on Jenkins master
             }
         }
     }
 }
-
