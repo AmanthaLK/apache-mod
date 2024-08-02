@@ -1,12 +1,13 @@
 pipeline {
     agent any
 
-    options {
-        // Clean the workspace before running the pipeline
-        cleanWs()
-    }
-
     stages {
+        stage('Clean Workspace') {
+            steps {
+                cleanWs() // Clean the workspace before running the stages
+            }
+        }
+
         stage('Build') {
             steps {
                 echo 'Starting Build Stage...'
