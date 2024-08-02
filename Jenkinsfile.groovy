@@ -5,7 +5,6 @@ pipeline {
         stage('Check Local File') {
             steps {
                 script {
-                    // Print the current directory and list files
                     sh '''
                         echo "Current directory:"
                         pwd
