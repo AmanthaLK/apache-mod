@@ -6,7 +6,8 @@ pipeline {
             steps {
                 echo 'Starting Build Stage...'
                 echo 'Building...'
-                sh 'ls' // This will run the 'ls' command
+                sh 'ls' 
+                sh 'cat index.html' 
             }
         }
     }
