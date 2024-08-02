@@ -23,13 +23,15 @@ pipeline {
                 script {
                     sshagent(['aws-personal']) {
                         try {
-                            // Copy the local index.html file to the remote server
+                            // Copy the file to the remote server with root access
                             sh '''
-                                echo "Copying index.html to remote server..."
-                                scp -o StrictHostKeyChecking=no index.html ubuntu@172.31.82.42:/var/www/html
+                                echo "Uploading index.html to /var/www/html on remote server with root access..."
+                                cat index.html | ssh -o StrictHostKeyChecking=no ubuntu@172.31.82.42 "sudo tee /var/www/html/index.html > /dev/null"
+                                sudo ssh -o StrictHostKeyChecking=no ubuntu@172.31.82.42 "sudo chown www-data:www-data /var/www/html/index.html"
+                                sudo ssh -o StrictHostKeyChecking=no ubuntu@172.31.82.42 "sudo chmod 644 /var/www/html/index.html"
                             '''
                         } catch (Exception e) {
-                            echo "Failed to copy index.html: ${e.message}"
+                            echo "Failed to upload index.html: ${e.message}"
                             currentBuild.result = 'FAILURE'
                         }
                     }
