@@ -14,7 +14,7 @@ pipeline {
             steps {
                 echo 'Listing contents of /home/ubuntu on Jenkins master...'
                 echo 'test'
-                sh 'ls /home/ubuntu' // List files and directories in /home/ubuntu on Jenkins master
+                
             }
         }
     }
