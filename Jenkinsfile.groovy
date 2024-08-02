@@ -11,11 +11,11 @@ pipeline {
                                 echo "Testing SSH connection..."
                                 ssh -o StrictHostKeyChecking=no ubuntu@172.31.82.42 << 'EOF'
                                 echo "Logged in as $(whoami)"
-                                sudo -i << 'EOF2'
-                                echo "Switched to root"
-                                cd /etc
-                                ls
-                                EOF2
+                                sudo -i bash -c '
+                                    echo "Switched to root";
+                                    cd /etc;
+                                    ls;
+                                '
                                 exit
                                 EOF
                             '''
