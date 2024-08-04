@@ -37,7 +37,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        echo "+++++++++Listing all S3 buckets+++++++++"
+                        echo "++++++++Listing all S3 buckets+++++++++"
                         aws s3 ls
                     '''
                 }
