@@ -58,6 +58,25 @@ pipeline {
             }
         }
 
+        stage('Run SonarQube Scanner') {
+            environment {
+                SONARQUBE_SERVER = 'http://3.80.137.180:9000/' // Replace with your SonarQube server URL
+                SONARQUBE_TOKEN = credentials('sq-id') // Ensure you have this credential ID in Jenkins
+            }
+            steps {
+                script {
+                    sh '''
+                        echo "+++++++++Running SonarQube Scanner+++++++++"
+                        sonar-scanner \
+                            -Dsonar.projectKey=sq-apache \
+                            -Dsonar.sources=. \
+                            -Dsonar.host.url=${SONARQUBE_SERVER} \
+                            -Dsonar.login=${SONARQUBE_TOKEN}
+                    '''
+                }
+            }
+        }
+
         stage('Clean Workspace') {
             steps {
                 cleanWs()
