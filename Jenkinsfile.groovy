@@ -58,23 +58,6 @@ pipeline {
             }
         }
 
-        stage('SonarQube Scan') {
-            steps {
-                script {
-                    withSonarQubeEnv('sq-id') {
-                        sh '''
-                            echo "+++++++++Running SonarQube Scanner+++++++++"
-                            sonar-scanner \
-                                -Dsonar.projectKey=sq-jenkins-test \
-                                -Dsonar.sources=. \
-                                -Dsonar.host.url=http://3.80.137.180:9000 \
-                                -Dsonar.login=${SONARQUBE_TOKEN}
-                        '''
-                    }
-                }
-            }
-        }
-
         stage('Clean Workspace') {
             steps {
                 cleanWs()
