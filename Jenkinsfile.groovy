@@ -33,24 +33,7 @@ pipeline {
             }
         }
 
-        stage('SonarQube Scan') {
-            steps {
-                script {
-                    def sonarScannerHome = tool 'SonarQube Scanner 6.1.0.4477'  // Use the exact tool name
-                    withCredentials([string(credentialsId: 'sq-id', variable: 'SONAR_TOKEN')]) {
-                        sh """
-                            echo "+++++++++Running SonarQube scan+++++++++"
-                            ${sonarScannerHome}/bin/sonar-scanner \
-                                -Dsonar.projectKey=sq-jenkins-test \
-                                -Dsonar.sources=. \
-                                -Dsonar.host.url=http://3.80.137.180:9000/ \
-                                -Dsonar.login=${SONAR_TOKEN}
-                        """
-                    }
-                }
-            }
-        }
-
+        
         stage('List S3 Buckets') {
             steps {
                 script {
